@@ -15,10 +15,7 @@ type FFmpeg struct {
 	cmd *cli.Cmd
 }
 
-func OpenFFmpeg(
-	cache cli.LRU,
-	handler cli.OSCmdHandler,
-) (ffmpeg *FFmpeg) {
+func OpenFFmpeg(cache cli.LRU, handler cli.OSCmdHandler) (ffmpeg *FFmpeg) {
 	cmd := cli.OpenCmd(cache, handler)
 	ffmpeg = &FFmpeg{cmd: cmd}
 	return ffmpeg

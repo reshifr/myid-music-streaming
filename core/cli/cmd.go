@@ -33,10 +33,7 @@ type Cmd struct {
 	handler OSCmdHandler
 }
 
-func OpenCmd(
-	cache LRU,
-	handler OSCmdHandler,
-) (cmd *Cmd) {
+func OpenCmd(cache LRU, handler OSCmdHandler) (cmd *Cmd) {
 	cmd = &Cmd{
 		cache:   cache,
 		handler: handler,
@@ -44,10 +41,7 @@ func OpenCmd(
 	return cmd
 }
 
-func (cmd *Cmd) Exec(
-	bin string,
-	args ...string,
-) (output []byte, code int) {
+func (cmd *Cmd) Exec(bin string, args ...string) (output []byte, code int) {
 	path, ok := cmd.locatePath(bin)
 	if !ok {
 		log.Fatalf("Exec: can not locate the '%v' path.", bin)
