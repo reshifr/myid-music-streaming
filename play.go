@@ -6,6 +6,10 @@ import (
 )
 
 func main() {
-	music := codec.GetFlac("build/sia.flac")
+	music, ok := codec.GetFlac("build/sia.flac")
+	if !ok {
+		fmt.Println("ERROR!")
+		return
+	}
 	fmt.Println(*music)
 }
