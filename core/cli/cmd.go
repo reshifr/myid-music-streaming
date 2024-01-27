@@ -61,8 +61,8 @@ func (cmd *Cmd) locatePath(bin string) (path string, ok bool) {
 	if ok {
 		return path, true
 	}
-	cmd.handler.Clearenv()
 	osCmd := cmd.handler.Command("/bin/which", bin)
+	cmd.handler.Clearenv()
 	output, err := osCmd.Output()
 	if err != nil {
 		return "", false

@@ -5,4 +5,6 @@ type Music struct {
 	Artist string
 	Album  string
 	Genre  string
+	Disc   uint32
+	Track  uint32
 }

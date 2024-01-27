@@ -6,7 +6,11 @@ import (
 	// "log"
 	// "strings"
 
+	"encoding/json"
+	"log"
+
 	"github.com/reshifr/play/core/cli"
+	"github.com/reshifr/play/core/entity"
 	// "github.com/reshifr/play/core/entity"
 	// "github.com/reshifr/play/core/entity"
 )
@@ -32,28 +36,28 @@ func (ffmpeg *FFmpeg) Nothing() {}
 // 	return music, true
 // }
 
-// func setTags(c *cli.Cli, path string, music *entity.Music) (ok bool) {
-// 	output, code := c.Exec(
-// 		"ffprobe",
-// 		"-v", "quiet",
-// 		"-print_format", "json",
-// 		"-show_entries", "format_tags",
-// 		path
-// 	)
-// 	if code != cli.SUCCESS {
-// 		return false
-// 	}
+func (ffmpeg *FFmpeg) setTags(path string, music *entity.Music) (ok bool) {
+	output, code := ffmpeg.cmd.Exec(
+		"ffprobe",
+		"-v", "-8",
+		"-print_format", "json=c=1",
+		"-show_entries", "format_tags=title,artist,album,genre,disc,track",
+		path,
+	)
+	if code != cli.SUCCESS {
+		return false
+	}
 
-// 	// var data map[string]interface{}
-// 	// if err := json.Unmarshal(output, &data); err != nil {
-// 	// 	log.Fatalf("Codec: can not decode music tags.")
-// 	// 	return false
-// 	// }
+	var data map[string]interface{}
+	if err := json.Unmarshal(output, &data); err != nil {
+		log.Fatalf("Codec: can not decode music tags.")
+		return false
+	}
 
-// 	// fmt.Println(data["format"]["tags"])
+	// fmt.Println(data["format"]["tags"])
 
-// 	return false
-// }
+	return false
+}
 
 // func getTag(output string, code int) string {
 // 	if code != cli.SUCCESS {
