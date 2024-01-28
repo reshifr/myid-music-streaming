@@ -1,16 +1,15 @@
 package core
 
-type OSCmd interface {
+type IOSCmd interface {
 	String() (cmd string)
 	Output() (output []byte, err error)
 }
 
-type OSCmdError interface {
+type IOSCmdErr interface {
 	ExitCode() (code int)
 }
 
-type LRU[K comparable, V any] interface {
-	Get(key K) (value V, ok bool)
-	Insert(key K, value V)
-	Contains(key K) (ok bool)
+type HOS struct {
+	Command  func(path string, args ...string) (cmd IOSCmd)
+	Clearenv func()
 }

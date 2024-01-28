@@ -8,16 +8,18 @@ import (
 
 	"github.com/reshifr/play/core"
 	"github.com/reshifr/play/core/codec"
+	"github.com/reshifr/play/core/ipc"
 )
 
 func main() {
-	handler := core.OSHandler{
+	handler := core.HOS{
 		Clearenv: os.Clearenv,
-		Command: func(path string, args ...string) (cmd core.OSCmd) {
+		Command: func(path string, args ...string) (cmd core.IOSCmd) {
 			return exec.Command(path, args...)
 		},
 	}
-	ffmpeg := codec.OpenFFmpeg(handler)
+	cli := ipc.OpenCLI(handler)
+	ffmpeg := codec.OpenFFmpeg(cli)
 	tag, _ := ffmpeg.GetTag("/home/reshifr/Downloads/sia")
 	output, _ := json.MarshalIndent(tag, "", "  ")
 	fmt.Println(string(output))

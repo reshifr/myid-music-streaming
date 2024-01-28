@@ -9,11 +9,10 @@ import (
 )
 
 type FFmpeg struct {
-	cli *ipc.CLI
+	cli ipc.ICLI
 }
 
-func OpenFFmpeg(handler core.OSHandler) (ffmpeg *FFmpeg) {
-	cli := ipc.OpenCLI(handler)
+func OpenFFmpeg(cli ipc.ICLI) (ffmpeg *FFmpeg) {
 	ffmpeg = &FFmpeg{cli: cli}
 	return ffmpeg
 }
@@ -26,7 +25,7 @@ func (ffmpeg *FFmpeg) GetTag(path string) (tag *MusicTag, ok bool) {
 		"-show_entries", "format_tags=title,artist,album,genre,disc,track",
 		path,
 	)
-	if code != ipc.CLI_EXIT_SUCCESS {
+	if code != core.CMD_EXIT_SUCCESS {
 		return nil, false
 	}
 	flat := decodeFlat(output)
