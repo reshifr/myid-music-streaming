@@ -1,6 +1,6 @@
 package entity
 
-type Music struct {
+type MusicTag struct {
 	Title  string
 	Artist string
 	Album  string

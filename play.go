@@ -1,11 +1,12 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"os/exec"
 
-	"github.com/hashicorp/golang-lru/v2"
+	lru "github.com/hashicorp/golang-lru/v2"
 	"github.com/reshifr/play/core/cli"
 	"github.com/reshifr/play/core/codec"
 )
@@ -23,15 +24,7 @@ func main() {
 		Clearenv: os.Clearenv,
 	}
 	ffmpeg := codec.OpenFFmpeg(cache, handler)
-	ffmpeg.Nothing()
-	// music, ok := codec.GetFlac("build/sia.flac")
-	// if !ok {
-	// 	fmt.Println("ERROR!")
-	// 	return
-	// }
-	// fmt.Println(*music)
-
-	// cache, ok := lru.New[string, string](100)
-	// var a exec.Cmd
-	// a.Output()
+	tag, _ := ffmpeg.GetTag("/home/reshifr/Downloads/sia")
+	output, _ := json.MarshalIndent(tag, "", "  ")
+	fmt.Println(string(output))
 }
