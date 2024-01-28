@@ -1,4 +1,4 @@
-package entity
+package codec
 
 type MusicTag struct {
 	Title  string

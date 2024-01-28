@@ -6,24 +6,18 @@ import (
 	"os"
 	"os/exec"
 
-	lru "github.com/hashicorp/golang-lru/v2"
-	"github.com/reshifr/play/core/cli"
+	"github.com/reshifr/play/core"
 	"github.com/reshifr/play/core/codec"
 )
 
 func main() {
-	cache, err := lru.New[string, string](10)
-	if err != nil {
-		fmt.Println("cache error!")
-		os.Exit(1)
-	}
-	handler := cli.OSCmdHandler{
-		Command: func(bin string, args ...string) cli.OSCmd {
-			return exec.Command(bin, args...)
-		},
+	handler := core.OSHandler{
 		Clearenv: os.Clearenv,
+		Command: func(path string, args ...string) (cmd core.OSCmd) {
+			return exec.Command(path, args...)
+		},
 	}
-	ffmpeg := codec.OpenFFmpeg(cache, handler)
+	ffmpeg := codec.OpenFFmpeg(handler)
 	tag, _ := ffmpeg.GetTag("/home/reshifr/Downloads/sia")
 	output, _ := json.MarshalIndent(tag, "", "  ")
 	fmt.Println(string(output))

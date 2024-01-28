@@ -2,34 +2,35 @@ package codec
 
 import (
 	"bytes"
-	"github.com/reshifr/play/core/cli"
-	"github.com/reshifr/play/core/entity"
 	"strconv"
+
+	"github.com/reshifr/play/core"
+	"github.com/reshifr/play/core/ipc"
 )
 
 type FFmpeg struct {
-	cmd *cli.Cmd
+	cli *ipc.CLI
 }
 
-func OpenFFmpeg(cache cli.LRU, handler cli.OSCmdHandler) (ffmpeg *FFmpeg) {
-	cmd := cli.OpenCmd(cache, handler)
-	ffmpeg = &FFmpeg{cmd: cmd}
+func OpenFFmpeg(handler core.OSHandler) (ffmpeg *FFmpeg) {
+	cli := ipc.OpenCLI(handler)
+	ffmpeg = &FFmpeg{cli: cli}
 	return ffmpeg
 }
 
-func (ffmpeg *FFmpeg) GetTag(path string) (tag *entity.MusicTag, ok bool) {
-	output, code := ffmpeg.cmd.Exec(
+func (ffmpeg *FFmpeg) GetTag(path string) (tag *MusicTag, ok bool) {
+	output, code := ffmpeg.cli.Exec(
 		"ffprobe",
 		"-v", "-8",
 		"-print_format", "flat",
 		"-show_entries", "format_tags=title,artist,album,genre,disc,track",
 		path,
 	)
-	if code != cli.SUCCESS {
+	if code != ipc.CLI_EXIT_SUCCESS {
 		return nil, false
 	}
 	flat := decodeFlat(output)
-	tag = &entity.MusicTag{
+	tag = &MusicTag{
 		Title:  flat["title"],
 		Artist: flat["artist"],
 		Album:  flat["album"],
