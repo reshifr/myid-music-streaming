@@ -21,7 +21,6 @@ func (cli *CLI) Exec(bin string, args ...string) (output []byte, code int) {
 	output, code = cli.execute(cmd)
 	if code != core.CMD_EXIT_SUCCESS {
 		log.Fatalf("Exec: can not execute '%v'.", cmd.String())
-		return nil, code
 	}
 	return output, code
 }
@@ -29,11 +28,12 @@ func (cli *CLI) Exec(bin string, args ...string) (output []byte, code int) {
 func (cli *CLI) execute(cmd core.ICmd) (output []byte, code int) {
 	cli.env.Clear()
 	output, err := cmd.Output()
+	code = core.CMD_EXIT_SUCCESS
 	if err != nil {
+		code = core.CMD_EXIT_FAILURE
 		if cmdErr, ok := err.(core.ICmdErr); ok {
-			return nil, cmdErr.ExitCode()
+			code = cmdErr.ExitCode()
 		}
-		return nil, core.CMD_EXIT_FAILURE
 	}
-	return output, core.CMD_EXIT_SUCCESS
+	return output, code
 }

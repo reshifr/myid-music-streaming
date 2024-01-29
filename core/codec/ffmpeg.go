@@ -85,6 +85,5 @@ func decodeOrder[O ~uint8 | ~uint16 | ~uint32](data string) (order O) {
 	if o > uint64(^O(0)) {
 		return 0
 	}
-	order = O(o)
-	return order
+	return O(o)
 }
