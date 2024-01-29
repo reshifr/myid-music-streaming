@@ -20,7 +20,7 @@ func main() {
 	}
 	cli := ipc.OpenCLI(handler)
 	ffmpeg := codec.OpenFFmpeg(cli)
-	tag, _ := ffmpeg.GetTag("/home/reshifr/Downloads/sia")
+	tag, _ := ffmpeg.ReadTag("/home/reshifr/Downloads/sia")
 	output, _ := json.MarshalIndent(tag, "", "  ")
 	fmt.Println(string(output))
 }

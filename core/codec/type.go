@@ -1,10 +1,10 @@
 package codec
 
-type MusicTag struct {
+type AudioTag struct {
 	Title  string
 	Artist string
 	Album  string
 	Genre  string
-	Disc   uint32
-	Track  uint32
+	Track  uint16
+	Disc   uint8
 }

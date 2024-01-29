@@ -1,5 +1,5 @@
 package codec
 
 type IFFmpeg interface {
-	GetTag(path string) (tag *MusicTag, ok bool)
+	ReadTag(path string) (tag *AudioTag, ok bool)
 }

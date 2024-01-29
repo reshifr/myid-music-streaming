@@ -18,7 +18,7 @@ func OpenCLI(handler core.HOS) (cli *CLI) {
 func (cli *CLI) Exec(bin string, args ...string) (output []byte, code int) {
 	path := "/usr/bin/" + bin
 	cmd := cli.handler.Command(path, args...)
-	output, code = cli.executePath(cmd)
+	output, code = cli.execute(cmd)
 	if code != core.CMD_EXIT_SUCCESS {
 		log.Fatalf("Exec: can not execute '%v'.", cmd.String())
 		return nil, code
@@ -26,7 +26,7 @@ func (cli *CLI) Exec(bin string, args ...string) (output []byte, code int) {
 	return output, code
 }
 
-func (cli *CLI) executePath(cmd core.IOSCmd) (output []byte, code int) {
+func (cli *CLI) execute(cmd core.IOSCmd) (output []byte, code int) {
 	cli.handler.Clearenv()
 	output, err := cmd.Output()
 	if err != nil {

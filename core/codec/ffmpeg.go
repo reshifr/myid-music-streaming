@@ -17,7 +17,7 @@ func OpenFFmpeg(cli ipc.ICLI) (ffmpeg *FFmpeg) {
 	return ffmpeg
 }
 
-func (ffmpeg *FFmpeg) GetTag(path string) (tag *MusicTag, ok bool) {
+func (ffmpeg *FFmpeg) ReadTag(path string) (tag *AudioTag, ok bool) {
 	output, code := ffmpeg.cli.Exec(
 		"ffprobe",
 		"-v", "-8",
@@ -29,13 +29,13 @@ func (ffmpeg *FFmpeg) GetTag(path string) (tag *MusicTag, ok bool) {
 		return nil, false
 	}
 	flat := decodeFlat(output)
-	tag = &MusicTag{
+	tag = &AudioTag{
 		Title:  flat["title"],
 		Artist: flat["artist"],
 		Album:  flat["album"],
 		Genre:  flat["genre"],
-		Disc:   extractOrder[uint32](flat["disc"]),
-		Track:  extractOrder[uint32](flat["track"]),
+		Track:  decodeOrder[uint16](flat["track"]),
+		Disc:   decodeOrder[uint8](flat["disc"]),
 	}
 	return tag, true
 }
@@ -68,7 +68,7 @@ func decodeFlat(data []byte) (flat map[string]string) {
 	return flat
 }
 
-func extractOrder[O uint8 | uint16 | uint32 | uint64](data string) (order O) {
+func decodeOrder[O ~uint8 | ~uint16 | ~uint32](data string) (order O) {
 	var ie int
 	for i, c := range data {
 		if i == 0 && c == '0' {
@@ -81,7 +81,10 @@ func extractOrder[O uint8 | uint16 | uint32 | uint64](data string) (order O) {
 		}
 	}
 	so := data[0:ie]
-	o, _ := strconv.ParseUint(so, 10, 64)
+	o, _ := strconv.ParseUint(so, 10, 63)
+	if o > uint64(^O(0)) {
+		return 0
+	}
 	order = O(o)
 	return order
 }
