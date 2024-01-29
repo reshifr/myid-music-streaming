@@ -81,8 +81,8 @@ func decodeOrder[O ~uint8 | ~uint16 | ~uint32](data string) (order O) {
 		}
 	}
 	so := data[0:ie]
-	o, _ := strconv.ParseUint(so, 10, 63)
-	if o > uint64(^O(0)) {
+	o, err := strconv.ParseUint(so, 10, 64)
+	if o > uint64(^O(0)) || err != nil {
 		return 0
 	}
 	return O(o)
