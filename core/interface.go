@@ -1,15 +1,15 @@
 package core
 
-type IOSCmd interface {
+type ICmd interface {
 	String() (cmd string)
 	Output() (output []byte, err error)
 }
 
-type IOSCmdErr interface {
+type ICmdErr interface {
 	ExitCode() (code int)
 }
 
-type HOS struct {
-	Command  func(path string, args ...string) (cmd IOSCmd)
-	Clearenv func()
+type IEnv interface {
+	Clear()
+	Command(path string, args ...string) (cmd ICmd)
 }

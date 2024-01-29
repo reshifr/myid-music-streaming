@@ -7,17 +7,17 @@ import (
 )
 
 type CLI struct {
-	handler core.HOS
+	env core.IEnv
 }
 
-func OpenCLI(handler core.HOS) (cli *CLI) {
-	cli = &CLI{handler: handler}
+func OpenCLI(env core.IEnv) (cli *CLI) {
+	cli = &CLI{env: env}
 	return cli
 }
 
 func (cli *CLI) Exec(bin string, args ...string) (output []byte, code int) {
 	path := "/usr/bin/" + bin
-	cmd := cli.handler.Command(path, args...)
+	cmd := cli.env.Command(path, args...)
 	output, code = cli.execute(cmd)
 	if code != core.CMD_EXIT_SUCCESS {
 		log.Fatalf("Exec: can not execute '%v'.", cmd.String())
@@ -26,11 +26,11 @@ func (cli *CLI) Exec(bin string, args ...string) (output []byte, code int) {
 	return output, code
 }
 
-func (cli *CLI) execute(cmd core.IOSCmd) (output []byte, code int) {
-	cli.handler.Clearenv()
+func (cli *CLI) execute(cmd core.ICmd) (output []byte, code int) {
+	cli.env.Clear()
 	output, err := cmd.Output()
 	if err != nil {
-		if cmdErr, ok := err.(core.IOSCmdErr); ok {
+		if cmdErr, ok := err.(core.ICmdErr); ok {
 			return nil, cmdErr.ExitCode()
 		}
 		return nil, core.CMD_EXIT_FAILURE
