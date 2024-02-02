@@ -1,6 +1,8 @@
 package ipc
 
-import "github.com/reshifr/play/core"
+import (
+	"github.com/reshifr/play/core"
+)
 
 type CLI[Env core.IEnv] struct {
 	env Env
@@ -15,7 +17,7 @@ func (cli *CLI[Env]) Exec(bin string, args ...string) ([]byte, *core.Error) {
 	cmd := cli.env.Command(path, args...)
 	output, code := cli.execute(cmd)
 	var coreErr *core.Error = nil
-	if code != core.CMD_EXIT_SUCCESS {
+	if code != core.CmdExitOk {
 		coreErr = core.ThrowErrorf(
 			code,
 			"ipc.CLI.Exec(): error execute '%v'.",
@@ -28,9 +30,9 @@ func (cli *CLI[Env]) Exec(bin string, args ...string) ([]byte, *core.Error) {
 func (cli *CLI[Env]) execute(cmd core.ICmd) ([]byte, int) {
 	cli.env.Clear()
 	output, err := cmd.Output()
-	code := core.CMD_EXIT_SUCCESS
+	code := core.CmdExitOk
 	if err != nil {
-		code = core.CMD_EXIT_FAILURE
+		code = core.CmdExitFail
 		if cmdErr, ok := err.(core.ICmdError); ok {
 			code = cmdErr.ExitCode()
 		}

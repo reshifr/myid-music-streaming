@@ -1,5 +1,9 @@
 package core
 
-type IRng interface {
+const (
+	RNGErrCode = 1
+)
+
+type IRNG interface {
 	Read(block []byte) (err error)
 }

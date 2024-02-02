@@ -1,6 +1,8 @@
 package codec
 
-import "github.com/reshifr/play/core"
+import (
+	"github.com/reshifr/play/core"
+)
 
 type AudioTag struct {
 	Title  string

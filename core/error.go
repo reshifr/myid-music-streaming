@@ -1,6 +1,8 @@
 package core
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type Error struct {
 	Msg  string

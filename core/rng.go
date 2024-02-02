@@ -1,8 +1,10 @@
 package core
 
-import "crypto/rand"
+import (
+	"crypto/rand"
+)
 
-type Rng struct{}
+type RNG struct{}
 
 func Read(block []byte) error {
 	_, err := rand.Read(block)
