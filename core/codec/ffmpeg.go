@@ -8,28 +8,27 @@ import (
 	"github.com/reshifr/play/core/ipc"
 )
 
-type FFmpeg struct {
-	cli ipc.ICLI
+type FFmpeg[CLI ipc.ICLI] struct {
+	cli CLI
 }
 
-func OpenFFmpeg(cli ipc.ICLI) (ffmpeg *FFmpeg) {
-	ffmpeg = &FFmpeg{cli: cli}
-	return ffmpeg
+func OpenFFmpeg[CLI ipc.ICLI](cli CLI) *FFmpeg[CLI] {
+	return &FFmpeg[CLI]{cli: cli}
 }
 
-func (ffmpeg *FFmpeg) ReadTag(path string) (tag *AudioTag, ok bool) {
-	output, code := ffmpeg.cli.Exec(
+func (ffmpeg *FFmpeg[CLI]) ReadTag(path string) (*AudioTag, *core.Error) {
+	output, coreErr := ffmpeg.cli.Exec(
 		"ffprobe",
 		"-v", "-8",
 		"-print_format", "flat",
 		"-show_entries", "format_tags=title,artist,album,genre,disc,track",
 		path,
 	)
-	if code != core.CMD_EXIT_SUCCESS {
-		return nil, false
+	if coreErr != nil {
+		return nil, coreErr
 	}
 	flat := decodeFlat(output)
-	tag = &AudioTag{
+	tag := &AudioTag{
 		Title:  flat["title"],
 		Artist: flat["artist"],
 		Album:  flat["album"],
@@ -37,13 +36,13 @@ func (ffmpeg *FFmpeg) ReadTag(path string) (tag *AudioTag, ok bool) {
 		Track:  decodeOrder[uint16](flat["track"]),
 		Disc:   decodeOrder[uint8](flat["disc"]),
 	}
-	return tag, true
+	return tag, coreErr
 }
 
-func decodeFlat(data []byte) (flat map[string]string) {
+func decodeFlat(data []byte) map[string]string {
 	var vo bool = true
 	var ika, ikb, iva, ivb int
-	flat = make(map[string]string)
+	flat := make(map[string]string)
 	for i := 0; i < len(data); i++ {
 		switch data[i] {
 		case byte('.'):
@@ -68,7 +67,7 @@ func decodeFlat(data []byte) (flat map[string]string) {
 	return flat
 }
 
-func decodeOrder[O ~uint8 | ~uint16 | ~uint32](data string) (order O) {
+func decodeOrder[O ~uint8 | ~uint16 | ~uint32](data string) O {
 	var ie int
 	for i, c := range data {
 		if i == 0 && c == '0' {

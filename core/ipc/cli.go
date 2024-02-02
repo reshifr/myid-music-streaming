@@ -1,37 +1,37 @@
 package ipc
 
-import (
-	"log"
+import "github.com/reshifr/play/core"
 
-	"github.com/reshifr/play/core"
-)
-
-type CLI struct {
-	env core.IEnv
+type CLI[Env core.IEnv] struct {
+	env Env
 }
 
-func OpenCLI(env core.IEnv) (cli *CLI) {
-	cli = &CLI{env: env}
-	return cli
+func OpenCLI[Env core.IEnv](env Env) *CLI[Env] {
+	return &CLI[Env]{env: env}
 }
 
-func (cli *CLI) Exec(bin string, args ...string) (output []byte, code int) {
+func (cli *CLI[Env]) Exec(bin string, args ...string) ([]byte, *core.Error) {
 	path := "/usr/bin/" + bin
 	cmd := cli.env.Command(path, args...)
-	output, code = cli.execute(cmd)
+	output, code := cli.execute(cmd)
+	var coreErr *core.Error = nil
 	if code != core.CMD_EXIT_SUCCESS {
-		log.Fatalf("Exec: can not execute '%v'.", cmd.String())
+		coreErr = core.ThrowErrorf(
+			code,
+			"ipc.CLI.Exec(): error execute '%v'.",
+			cmd.String(),
+		)
 	}
-	return output, code
+	return output, coreErr
 }
 
-func (cli *CLI) execute(cmd core.ICmd) (output []byte, code int) {
+func (cli *CLI[Env]) execute(cmd core.ICmd) ([]byte, int) {
 	cli.env.Clear()
 	output, err := cmd.Output()
-	code = core.CMD_EXIT_SUCCESS
+	code := core.CMD_EXIT_SUCCESS
 	if err != nil {
 		code = core.CMD_EXIT_FAILURE
-		if cmdErr, ok := err.(core.ICmdErr); ok {
+		if cmdErr, ok := err.(core.ICmdError); ok {
 			code = cmdErr.ExitCode()
 		}
 	}

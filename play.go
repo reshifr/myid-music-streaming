@@ -10,10 +10,15 @@ import (
 )
 
 func main() {
-	env := core.Env{}
-	cli := ipc.OpenCLI(env)
+	var env core.Env
+	cli := ipc.OpenCLI(&env)
 	ffmpeg := codec.OpenFFmpeg(cli)
-	tag, _ := ffmpeg.ReadTag("/home/reshifr/Downloads/sia")
+	tag, coreErr := ffmpeg.ReadTag("build/x1")
 	output, _ := json.MarshalIndent(tag, "", "  ")
-	fmt.Println(string(output))
+	if coreErr != nil {
+		fmt.Println(coreErr.Msg)
+		return
+	}
+	stag := string(output)
+	fmt.Println(stag)
 }
