@@ -8,24 +8,24 @@ import (
 	"github.com/reshifr/play/core/ipc"
 )
 
-type FFmpeg[CLI ipc.ICLI] struct {
-	cli CLI
+type FFmpeg[C ipc.ICLI] struct {
+	cli C
 }
 
-func OpenFFmpeg[CLI ipc.ICLI](cli CLI) *FFmpeg[CLI] {
-	return &FFmpeg[CLI]{cli: cli}
+func OpenFFmpeg[C ipc.ICLI](cli C) FFmpeg[C] {
+	return FFmpeg[C]{cli: cli}
 }
 
-func (ffmpeg *FFmpeg[CLI]) ReadTag(path string) (*AudioTag, *core.Error) {
-	output, coreErr := ffmpeg.cli.Exec(
+func (ffmpeg *FFmpeg[C]) ReadTag(path string) (*AudioTag, *core.Error) {
+	output, cerr := ffmpeg.cli.Exec(
 		"ffprobe",
 		"-v", "-8",
 		"-print_format", "flat",
 		"-show_entries", "format_tags=title,artist,album,genre,disc,track",
 		path,
 	)
-	if coreErr != nil {
-		return nil, coreErr
+	if cerr != nil {
+		return nil, cerr
 	}
 	flat := decodeFlat(output)
 	tag := &AudioTag{
@@ -36,7 +36,7 @@ func (ffmpeg *FFmpeg[CLI]) ReadTag(path string) (*AudioTag, *core.Error) {
 		Track:  decodeOrder[uint16](flat["track"]),
 		Disc:   decodeOrder[uint8](flat["disc"]),
 	}
-	return tag, coreErr
+	return tag, cerr
 }
 
 func decodeFlat(data []byte) map[string]string {

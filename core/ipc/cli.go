@@ -4,30 +4,30 @@ import (
 	"github.com/reshifr/play/core"
 )
 
-type CLI[Env core.IEnv] struct {
-	env Env
+type CLI[E core.IEnv] struct {
+	env E
 }
 
-func OpenCLI[Env core.IEnv](env Env) *CLI[Env] {
-	return &CLI[Env]{env: env}
+func OpenCLI[E core.IEnv](env E) CLI[E] {
+	return CLI[E]{env: env}
 }
 
-func (cli *CLI[Env]) Exec(bin string, args ...string) ([]byte, *core.Error) {
+func (cli *CLI[E]) Exec(bin string, args ...string) ([]byte, *core.Error) {
 	path := "/usr/bin/" + bin
 	cmd := cli.env.Command(path, args...)
 	output, code := cli.execute(cmd)
-	var coreErr *core.Error = nil
+	var cerr *core.Error = nil
 	if code != core.CmdExitOk {
-		coreErr = core.ThrowErrorf(
+		cerr = core.NewErrorf(
 			code,
 			"ipc.CLI.Exec(): error execute '%v'.",
 			cmd.String(),
 		)
 	}
-	return output, coreErr
+	return output, cerr
 }
 
-func (cli *CLI[Env]) execute(cmd core.ICmd) ([]byte, int) {
+func (cli *CLI[E]) execute(cmd core.ICmd) ([]byte, int) {
 	cli.env.Clear()
 	output, err := cmd.Output()
 	code := core.CmdExitOk

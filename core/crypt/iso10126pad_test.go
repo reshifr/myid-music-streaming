@@ -14,9 +14,9 @@ func Test_ISO10126Pad_Add(t *testing.T) {
 		pad := InitISO10126Pad(rng)
 		align := uint8(8)
 		block := make([]byte, align)
-		var coreErr *core.Error = nil
-		expBlock, expCoreErr := pad.Add(block, align)
-		assert.Equal(t, expBlock, block)
-		assert.Equal(t, expCoreErr, coreErr)
+		var cerr *core.Error = nil
+		eblock, ecerr := pad.Add(block, align)
+		assert.Equal(t, eblock, block)
+		assert.Equal(t, ecerr, cerr)
 	})
 }
