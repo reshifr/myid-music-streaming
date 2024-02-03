@@ -13,10 +13,10 @@ func main() {
 	var env core.Env
 	cli := ipc.OpenCLI(&env)
 	ffmpeg := codec.OpenFFmpeg(&cli)
-	tag, coreErr := ffmpeg.ReadTag("build/x1")
+	tag, cerr := ffmpeg.ReadTag("build/x1")
 	output, _ := json.MarshalIndent(tag, "", "  ")
-	if coreErr != nil {
-		fmt.Println(coreErr.Msg)
+	if cerr != nil {
+		fmt.Println(cerr.Msg)
 		return
 	}
 	stag := string(output)
