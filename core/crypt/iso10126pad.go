@@ -4,12 +4,12 @@ import (
 	"github.com/reshifr/play/core"
 )
 
-type ISO10126Pad[R core.IRNG] struct {
-	rng R
+type ISO10126Pad[R core.ICSPRNG] struct {
+	csprng R
 }
 
-func InitISO10126Pad[R core.IRNG](rng R) ISO10126Pad[R] {
-	return ISO10126Pad[R]{rng: rng}
+func InitISO10126Pad[R core.ICSPRNG](csprng R) ISO10126Pad[R] {
+	return ISO10126Pad[R]{csprng: csprng}
 }
 
 func (pad *ISO10126Pad[R]) Add(block []byte, align uint8) ([]byte, *core.Error) {
@@ -21,10 +21,10 @@ func (pad *ISO10126Pad[R]) Add(block []byte, align uint8) ([]byte, *core.Error) 
 	bn := bl / uint(align)
 	zpadd := (bn+1)*uint(align) - bl
 	padd := make([]byte, zpadd)
-	err := pad.rng.Read(padd)
+	err := pad.csprng.Read(padd)
 	if err != nil {
 		cerr = core.NewError(
-			core.RNGErrCode,
+			core.CSPRNGErrCode,
 			"crypt.ISO10126Pad.Add(): rng read error.",
 		)
 		return block, cerr

@@ -4,7 +4,7 @@ import (
 	"crypto/rand"
 )
 
-type RNG struct{}
+type CSPRNG struct{}
 
 func Read(block []byte) error {
 	_, err := rand.Read(block)

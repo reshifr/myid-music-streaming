@@ -11,7 +11,7 @@ packages:
       IEnv:
       ICmd:
       ICmdError:
-      IRNG:
+      ICSPRNG:
   github.com/reshifr/play/core/codec:
     interfaces:
       IFFmpeg:

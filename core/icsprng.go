@@ -1,9 +1,9 @@
 package core
 
 const (
-	RNGErrCode = 1
+	CSPRNGErrCode = 1
 )
 
-type IRNG interface {
+type ICSPRNG interface {
 	Read(block []byte) (err error)
 }
