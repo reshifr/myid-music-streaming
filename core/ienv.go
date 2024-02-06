@@ -1,8 +1,8 @@
 package core
 
 const (
-	CmdExitOk   = 0
-	CmdExitFail = 1
+	CmdExitOk = iota
+	CmdExitFail
 )
 
 type IEnv interface {

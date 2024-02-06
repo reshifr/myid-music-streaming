@@ -4,6 +4,10 @@ import (
 	"github.com/reshifr/play/core"
 )
 
+const (
+	FFmpegExecErr = iota + 1
+)
+
 type AudioTag struct {
 	Title  string
 	Artist string
@@ -14,5 +18,5 @@ type AudioTag struct {
 }
 
 type IFFmpeg interface {
-	ReadTag(path string) (tag *AudioTag, err *core.Error)
+	ReadTag(path string) (tag *AudioTag, cerr *core.Error)
 }

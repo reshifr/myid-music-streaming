@@ -11,7 +11,19 @@ import (
 )
 
 func Test_ISO10126Pad_Add(t *testing.T) {
-	t.Run("Length of block equals align", func(t *testing.T) {
+	t.Run("Zero block length", func(t *testing.T) {
+		csprng := core_mock.NewCSPRNG(t)
+		pad := InitISO10126Pad(csprng)
+		align := uint8(0)
+		bl := int(align)
+		eblock := make([]byte, bl)
+		var ecerr *core.Error = nil
+
+		block, cerr := pad.Add(eblock, align)
+		assert.Equal(t, eblock, block)
+		assert.Equal(t, ecerr, cerr)
+	})
+	t.Run("Block length equals align", func(t *testing.T) {
 		csprng := core_mock.NewCSPRNG(t)
 		pad := InitISO10126Pad(csprng)
 		align := uint8(16)
@@ -30,7 +42,7 @@ func Test_ISO10126Pad_Add(t *testing.T) {
 		bl := 20
 		eblock := make([]byte, bl)
 		var ecerr *core.Error = core.NewError(
-			core.CSPRNGErrCode,
+			core.CSPRNGError,
 			"crypt.ISO10126Pad.Add(): rng read error.",
 		)
 
@@ -41,7 +53,7 @@ func Test_ISO10126Pad_Add(t *testing.T) {
 		assert.Equal(t, eblock, block)
 		assert.Equal(t, ecerr, cerr)
 	})
-	t.Run("Normal", func(t *testing.T) {
+	t.Run("Block length does not equal align", func(t *testing.T) {
 		csprng := core_mock.NewCSPRNG(t)
 		pad := InitISO10126Pad(csprng)
 		align := uint8(16)
@@ -49,13 +61,13 @@ func Test_ISO10126Pad_Add(t *testing.T) {
 		eblock := make([]byte, bl)
 		var ecerr *core.Error = nil
 
-		zpadd := 12
-		padd := make([]byte, zpadd)
+		paddl := 12
+		padd := make([]byte, paddl)
 		var err error = nil
 		csprng.On("Read", padd).Return(err).Once()
 
 		block, cerr := pad.Add(eblock, align)
-		padd[zpadd-1] = byte(zpadd)
+		padd[paddl-1] = byte(paddl)
 		eblock = append(eblock, padd...)
 		assert.Equal(t, eblock, block)
 		assert.Equal(t, ecerr, cerr)

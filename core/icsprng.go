@@ -1,7 +1,7 @@
 package core
 
 const (
-	CSPRNGErrCode = 1
+	CSPRNGReadErr = iota + 1
 )
 
 type ICSPRNG interface {
