@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  play_postgresql:
+    image: postgres:16.2
+    restart: unless-stopped
+    shm_size: 128mb
+    env_file:
+      - .env
+    volumes:
+      - ../build/postgresql/data:/var/lib/postgresql/data
+    networks:
+      play_network:
+        ipv4_address: 172.100.1.1
+
+  play_pgadmin:
+    image: dpage/pgadmin4:8.4
+    restart: unless-stopped
+    ports:
+    - 8080:80
+    env_file:
+      - .env
+    networks:
+      play_network:
+        ipv4_address: 172.100.2.1
+    depends_on:
+     - play_postgresql
+
+  # minio:
+  #   image: quay.io/minio/minio:RELEASE.2024-03-15T01-07-19Z
+  #   restart: unless-stopped
+  #   ports:
+  #     - 9000:9000
+  #     - 9001:9001
+  #   env_file:
+  #     - .env
+  #   volumes:
+  #     - ../build/minio/data:/data
+  #   command: server /data --console-address :9001
+
+networks:
+  play_network:
+    name: play_network
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 172.100.0.0/16
+         gateway: 172.100.0.1
