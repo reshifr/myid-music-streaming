@@ -22,11 +22,3 @@ print_info() { # ( msg... )
 		printf "$arg\n"
 	done
 }
-
-verbosify() { # ( cmd, args... )
-	if [ $VERBOSIFY = 0 ]; then
-		"$@" &> /dev/null
-	else
-		"$@"
-	fi
-}
