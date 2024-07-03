@@ -24,7 +24,7 @@ func NewDrodhowden[OS os.OS, Tag drodhowden.Tag](os OS, tag Tag) Drodhowden[OS, 
 func (Drodhowden[OS, Tag]) transcodeToJPEG(pict drodhowden.Picture) []byte {
 	var err error
 	var img image.Image
-	var jpegBuf bytes.Buffer
+	var buf bytes.Buffer
 
 	r := bytes.NewReader(pict.Data())
 	img, err = gif.Decode(r)
@@ -40,11 +40,11 @@ func (Drodhowden[OS, Tag]) transcodeToJPEG(pict drodhowden.Picture) []byte {
 		return nil
 	}
 
-	err = jpeg.Encode(&jpegBuf, img, &jpeg.Options{Quality: 100})
+	err = jpeg.Encode(&buf, img, &jpeg.Options{Quality: 100})
 	if err != nil {
 		return nil
 	}
-	return jpegBuf.Bytes()
+	return buf.Bytes()
 }
 
 func (d Drodhowden[OS, Tag]) AudioTag(path string) (*AudioTag, error) {
