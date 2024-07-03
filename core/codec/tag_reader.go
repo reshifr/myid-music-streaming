@@ -3,29 +3,29 @@ package codec
 type TagReaderError int
 
 const (
-	ErrTagReading TagReaderError = iota + 1
-	ErrTagParsing
+	ErrTagReaderReadFile TagReaderError = iota + 1
+	ErrTagReaderReadMetadata
+	ErrTagReaderCloseFile
 )
 
 func (err TagReaderError) Error() string {
 	switch err {
-	case ErrTagReading:
-		return "ErrInvalidIVLen: invalid IV length."
+	case ErrTagReaderReadFile:
+		return "ErrTagReaderReadFile: hello."
 	default:
 		return "Error: unknown."
 	}
 }
 
 type AudioTag struct {
-	Title  string `json:"title"`
-	Artist string `json:"artist"`
-	Album  string `json:"album"`
-	Genre  string `json:"genre"`
-	Track  uint32 `json:"track"`
-	Disc   uint32 `json:"disc"`
-	Year   uint32 `json:"year"`
+	Title  string
+	Artist string
+	Album  string
+	Cover  []byte
+	Track  uint32
+	Disc   uint32
 }
 
 type TagReader interface {
-	Audio(path string) (tag *AudioTag, err error)
+	AudioTag(path string) (tag *AudioTag, err error)
 }

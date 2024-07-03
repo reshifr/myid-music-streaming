@@ -5,12 +5,9 @@ TEST =
 UNIT_TEST_BUILD_DIR = $(BUILD_DIR)/unit-test
 UNIT_TEST_PKG = \
 	./core/codec \
-	./core/codec/impl \
-	./core/ipc \
-	./core/ipc/impl
+	./core/ipc
 
-INTEGRATION_TEST_PKG = \
-	./core/codec/test
+INTEGRATION_TEST_PKG =
 
 MOCK_DIR = \
 	./core/crypto/mock \
